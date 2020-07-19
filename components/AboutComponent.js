@@ -3,6 +3,7 @@ import { Text, FlatList } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import { Loading } from './LoadingComponent';
 
 const mapStateToProps = state => {
     return {
@@ -12,16 +13,43 @@ const mapStateToProps = state => {
 
 const RenderLeader = ({item, index}) => {
     
-    return(
-        <ListItem 
-            key={index}
-            title={item.name}
-            subtitle={item.description}
-            subtitleNumberOfLines={15}
-            hideChevron={true}
-            leftAvatar={{source: {uri: baseUrl + item.image}}}
-        />
-    )
+    if (this.props.leaders.isLoading) {
+        return(
+            <ScrollView>
+                <History />
+                <Card
+                    title='Corporate Leadership'>
+                    <Loading />
+                </Card>
+            </ScrollView>
+        );
+    }
+    else if (this.props.leaders.errMess) {
+        return(
+            <ScrollView>
+                <History />
+                <Card
+                    title='Corporate Leadership'>
+                    <Text>{this.props.leaders.errMess}</Text>
+                </Card>
+            </ScrollView>
+        );
+    }
+    else {
+        return(
+            <ScrollView>
+                <History />
+                <Card
+                    title='Corporate Leadership'>
+                <FlatList 
+                    data={this.props.leaders.leaders}
+                    renderItem={renderLeader}
+                    keyExtractor={item => item.id.toString()}
+                    />
+                </Card>
+            </ScrollView>
+        );
+    }
 }
 
 const History = () => {
@@ -51,7 +79,7 @@ class About extends Component{
                     renderItem={renderLeader}
                     keyExtractor={item => item.id.toString()}
                     />
-                    <RenderLeader leaders={this.state.leaders}/>
+                    <RenderLeader leaders={this.props.leaders.leaders}/>
                 </Card>
             </ScrollView>            
         );
