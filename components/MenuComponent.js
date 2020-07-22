@@ -3,6 +3,7 @@ import { View, FlatList } from 'react-native';
 import { Tile } from 'react-native-elements';
 import { DISHES } from '../shared/dishes';
 import { Loading } from './LoadingComponent';
+import * as Animatable from 'react-native-animatable';
 
 class Menu extends Component{
 
@@ -16,6 +17,7 @@ class Menu extends Component{
         const renderMenuItem = ({item, index}) => {
 
             return (
+                <Animatable.View animation="fadeInRightBig" duration={2000}>                
                     <Tile
                         key={index}
                         title={item.name}
@@ -23,7 +25,8 @@ class Menu extends Component{
                         featured
                         onPress={() => navigate('Dishdetail', { dishId: item.id })}
                         imageSrc={{ uri: baseUrl + item.image}}
-                        />
+                    />
+                </Animatable.View>
             );
         };
 
