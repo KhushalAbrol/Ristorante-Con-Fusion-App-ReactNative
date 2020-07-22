@@ -50,12 +50,10 @@ class Favorites extends Component {
                                 }
                             ],
                             { cancelable: false }
-                        );
-                        
+                        );                        
                     }
                 } 
             ];
-
             return (
                 <Swipeout right={rightButton} autoClose={true}>
                     <ListItem
