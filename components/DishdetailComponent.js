@@ -30,13 +30,24 @@ function RenderDish( props ){
         else
             return false;
     }
+    const recognizeComment = ({ moveX, moveY, dx, dy }) => {
+        if ( dx > 200 )
+            return true;
+        else 
+            return false;
+    }
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: (e, gestureState) => {
             return true;
         },
         onPanResponderGrant: () => {this.view.rubberBand(1000)
-            .then(endState => console.log(endState.finished ? 'finished' : 'cancelled'));},
+            .then(endState => console.log(endState.finished ? 'finished' : 'cancelled'));
+        },
+        onPanResponderMove: (e, gestureState) => {
+            if (recognizeComment(gestureState))
+                openCommentForm()
+        },
         onPanResponderEnd: (e, gestureState) => {
             console.log("pan responder end", gestureState);
             if (recognizeDrag(gestureState))
@@ -49,7 +60,6 @@ function RenderDish( props ){
                     ],
                     { cancelable: false }
                 );
-
             return true;
         }
     })
@@ -181,54 +191,54 @@ class Dishdetail extends Component{
                     favorite={this.props.favorites.some(el => el === dishId)} 
                     onPress={() => this.markFavorite(dishId)}
                     openCommentForm= {() => this.openCommentForm} />
-                    <Modal 
-                       animationType= {'slide'}
-                       transparent= {false}
-                       visible= {this.state.showCommentForm}
-                       onDismiss= {() => {this.resetCommentForm()}}
-                       onRequestClose= {() => this.resetCommentForm()}
-                    >
-                        <View style= {styles.modal}>
-                            <Text style= {styles.modalTitle}> Add your Comment </Text>
-                            <Rating 
-                              minValue= {1}
-                              startingValue= {3}
-                              fractions= {0}
-                              showRating= {true}
-                              onFinishRating= {(rating => this.setRating(rating))}
-                            />
-                            <Input 
-                              placeholder= 'Author'
-                              leftIcon= {
-                                  <Icon 
-                                     name= 'user'
-                                     type= 'font-awesome'
-                                  />
-                              }
-                              onChangeText= {(author) => this.setAuthor(author)}
-                            />
-                            <Input 
-                              placeholder= 'Comment'
-                              leftIcon= {
-                                  <Icon
-                                     name= 'comment'
-                                     type= 'font-awesome'
-                                   />
-                              }
-                              onChangeText= {(comment) => this.setComment(comment)}
-                            />
-                            <Button 
-                              title= 'Submit'
-                              color= '#512DA8'
-                              onPress= {() => {this.handleComment(dishId)}}
-                            />
-                            <Button 
-                              title= 'Cancel'
-                              color= '#512DA8'
-                              onPress= {() => {this.resetCommentForm}}
-                            />
-                        </View>
-                    </Modal>
+                <Modal 
+                    animationType= {'slide'}
+                    transparent= {false}
+                    visible= {this.state.showCommentForm}
+                    onDismiss= {() => {this.resetCommentForm()}}
+                    onRequestClose= {() => this.resetCommentForm()}
+                >
+                    <View style= {styles.modal}>
+                        <Text style= {styles.modalTitle}> Add your Comment </Text>
+                        <Rating 
+                            minValue= {1}
+                            startingValue= {3}
+                            fractions= {0}
+                            showRating= {true}
+                            onFinishRating= {(rating => this.setRating(rating))}
+                        />
+                        <Input 
+                            placeholder= 'Author'
+                            leftIcon= {
+                                <Icon 
+                                    name= 'user'
+                                    type= 'font-awesome'
+                                />
+                            }
+                            onChangeText= {(author) => this.setAuthor(author)}
+                        />
+                        <Input 
+                            placeholder= 'Comment'
+                            leftIcon= {
+                                <Icon
+                                    name= 'comment'
+                                    type= 'font-awesome'
+                                />
+                            }
+                            onChangeText= {(comment) => this.setComment(comment)}
+                        />
+                        <Button 
+                            title= 'Submit'
+                            color= '#512DA8'
+                            onPress= {() => {this.handleComment(dishId)}}
+                        />
+                        <Button 
+                            title= 'Cancel'
+                            color= '#512DA8'
+                            onPress= {() => {this.resetCommentForm}}
+                        />
+                    </View>
+                </Modal>
                 <RenderComments comments={this.props.comments.comments.filter((comment) => comment.dishId === dishId)} />
             </ScrollView>
         );
