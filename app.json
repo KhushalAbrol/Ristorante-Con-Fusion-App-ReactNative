@@ -1,5 +1,6 @@
 {
   "expo": {
+    "sdkVersion": "27.0.0",
     "name": "confusion",
     "slug": "confusion",
     "version": "1.0.0",
@@ -17,7 +18,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "net.food.confusion.confusion"
+    },
+    "android": {
+      "package": "net.food.confusion.confusion"
     },
     "web": {
       "favicon": "./assets/favicon.png"
