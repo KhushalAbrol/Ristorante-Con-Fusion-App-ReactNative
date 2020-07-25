@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text,ScrollView, View, StyleSheet, Picker, Switch, Button, Alert } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import { Permissions, Notifications } from 'expo';
+import * as Calendar from 'expo-calendar';
 import * as Animatable from 'react-native-animatable';
 
 class Reservation extends Component {
@@ -37,6 +38,45 @@ class Reservation extends Component {
             date: '',
             showModal: false
         });
+    };
+
+    async obtainCalendarPermission() {
+        const { status } = await Calendar.requestCalendarPermissionsAsync();
+        if (permission.status !== 'granted') {
+            permission = await Calendar.requestCalendarPermissionsAsync();
+            if (permission.status !== 'granted') {
+                Alert.alert("Calender permission needed to add event to the calender");
+            }
+        }
+
+    }
+
+    async getDefaultCalendarSource() {
+        const calendars = await Calendar.getCalendarsAsync();
+        const defaultCalendars = calendars.filter(each => each.source.name === 'Default');
+        return defaultCalendars[0].source;
+      }
+
+    async addReservationToCalendar() {
+        const defaultCalendarSource = Platform.OS === 'ios' ? await Calendar.getDefaultCalendarSource() : { isLocalAccount: true, name: 'Calendar'};
+        const newCalendarID = await Calendar.createCalendarAsync({
+            title: 'Con Fusion Table Reservation',
+            startDate: date,
+            endDate: date.setHours( date.getHours() + 2 ),
+            color: 'blue',
+            source: {
+                isLocalAccount: true,
+                name: 'Confusion Calender'
+            },
+            name: 'internalCalendarName',
+            ownerAccount: 'personal',
+            timeZone: 'Asia/Hong_Kong',
+            accessLevel: Calendar.CalendarAccessLevel.OWNER,
+            location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong'
+
+          });
+          console.log(`Your new calendar ID is: ${newCalendarID}`);
+
     }
 
     async obtainNotificationPermission() {
@@ -79,7 +119,7 @@ class Reservation extends Component {
                 },
                 {
                     text: 'OK',
-                    onPress: () =>  {this.presentLocalNotification(this.state.date); this.resetForm();}
+                    onPress: () =>  {this.presentLocalNotification(this.state.date); {createCalendar} ; this.resetForm();}
                 }
             ]
         )
@@ -140,7 +180,7 @@ class Reservation extends Component {
                             }
                             // ... You can check the source to find the other keys. 
                             }}
-                            onDateChange={(date) => {this.setState({date: date})}}
+                            onDateChange={(date) => {this.setState({date: Date(Date.parse(date))})}}
                         />
                     </View>
                     <View style={styles.formRow}>

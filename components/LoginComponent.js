@@ -162,9 +162,7 @@ class RegisterTab extends Component {
             if(!result.cancelled) {
                 this.processImage(result.uri);
             }
-        }
-        
-
+        }    
     }
 
     processImage = async (imageUri) => {
